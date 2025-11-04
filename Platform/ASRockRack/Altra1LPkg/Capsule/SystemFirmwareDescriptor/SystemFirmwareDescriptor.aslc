@@ -1,0 +1,77 @@
+/** @file
+  System Firmware descriptor.
+
+  Copyright (c) 2016, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2017, Linaro, Ltd. All rights reserved.<BR>
+  Copyright (c) 2020 - 2021, Ampere Computing LLC. All rights reserved.<BR>
+
+  SPDX-License-Identifier: BSD-2-Clause-Patent
+
+**/
+
+#include <PiPei.h>
+
+#include <Guid/EdkiiSystemFmpCapsule.h>
+#include <Protocol/FirmwareManagement.h>
+
+#include "HostFwInfo.h"
+
+#define PACKAGE_VERSION                     0xFFFFFFFF
+#define PACKAGE_VERSION_STRING              L"Unknown"
+
+#define IMAGE_ID                            SIGNATURE_64('A', 'S', 'R', 'R', '1', 'L', 'F', 'W')
+#define IMAGE_ID_STRING                     L"ALTRAD8UD-1L Host Firmware"
+
+// PcdSystemFmpCapsuleImageTypeIdGuid
+
+#define IMAGE_TYPE_ID_GUID                  { 0xb7704e65, 0xf15e, 0x4299, { 0xb8, 0xe8, 0x6f, 0xee, 0x16, 0x4b, 0x8f, 0xf9 } }
+
+typedef struct {
+  EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR  Descriptor;
+  // real string data
+  CHAR16                                  ImageIdNameStr[sizeof(IMAGE_ID_STRING)/sizeof(CHAR16)];
+  CHAR16                                  VersionNameStr[sizeof(CURRENT_FIRMWARE_VERSION_STRING)/sizeof(CHAR16)];
+  CHAR16                                  PackageVersionNameStr[sizeof(PACKAGE_VERSION_STRING)/sizeof(CHAR16)];
+} IMAGE_DESCRIPTOR;
+
+STATIC IMAGE_DESCRIPTOR mImageDescriptor =
+{
+  {
+    EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR_SIGNATURE,
+    sizeof(EDKII_SYSTEM_FIRMWARE_IMAGE_DESCRIPTOR),
+    sizeof(IMAGE_DESCRIPTOR),
+    PACKAGE_VERSION,                                       // PackageVersion
+    OFFSET_OF (IMAGE_DESCRIPTOR, PackageVersionNameStr),   // PackageVersionName
+    1,                                                     // ImageIndex;
+    {0x0},                                                 // Reserved
+    IMAGE_TYPE_ID_GUID,                                    // ImageTypeId;
+    IMAGE_ID,                                              // ImageId;
+    OFFSET_OF (IMAGE_DESCRIPTOR, ImageIdNameStr),          // ImageIdName;
+    CURRENT_FIRMWARE_VERSION,                              // Version;
+    OFFSET_OF (IMAGE_DESCRIPTOR, VersionNameStr),          // VersionName;
+    {0x0},                                                 // Reserved2
+    0xA00000,                                              // Size;
+    IMAGE_ATTRIBUTE_IMAGE_UPDATABLE |
+      IMAGE_ATTRIBUTE_RESET_REQUIRED |
+      IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED |
+      IMAGE_ATTRIBUTE_IN_USE |
+      IMAGE_ATTRIBUTE_UEFI_IMAGE,                          // AttributesSupported;
+    IMAGE_ATTRIBUTE_IMAGE_UPDATABLE |
+      IMAGE_ATTRIBUTE_RESET_REQUIRED |
+      IMAGE_ATTRIBUTE_AUTHENTICATION_REQUIRED |
+      IMAGE_ATTRIBUTE_IN_USE |
+      IMAGE_ATTRIBUTE_UEFI_IMAGE,                          // AttributesSetting;
+    0x0,                                                   // Compatibilities;
+    LOWEST_SUPPORTED_FIRMWARE_VERSION,                     // LowestSupportedImageVersion;
+    0x00000000,                                            // LastAttemptVersion;
+    0,                                                     // LastAttemptStatus;
+    {0x0},                                                 // Reserved3
+    0,                                                     // HardwareInstance;
+  },
+  // real string data
+  IMAGE_ID_STRING,
+  CURRENT_FIRMWARE_VERSION_STRING,
+  PACKAGE_VERSION_STRING,
+};
+
+VOID* CONST ReferenceAcpiTable = &mImageDescriptor;

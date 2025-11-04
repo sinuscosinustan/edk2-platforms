@@ -69,6 +69,7 @@ usage () {
   echo "    Ampere     -> Jade"
   echo "    ASRockRack -> Altra1L2Q"
   echo "    ASRockRack -> Altra1L2T"
+  echo "    ASRockRack -> Altra1L"
   echo ""
   echo "Environment Variables:"
   echo "  SECUREBOOT_DIR       - directory to store SecureBoot keys, certs etc."
